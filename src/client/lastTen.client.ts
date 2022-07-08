@@ -42,10 +42,6 @@ export class LastTenClient extends AccountUtils {
         programId,
         this.provider
       );
-    } else {
-      //means running inside test suite
-      // @ts-ignore
-      this.lastTenProgram = anchor.workspace.LastTen as Program<LastTen>;
     }
   }
 
