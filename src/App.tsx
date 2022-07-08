@@ -66,7 +66,7 @@ const Content: FC = () => {
         const ltClient = new LastTenClient(conn, wallet as any, ltIdl as any, program);
         const bucket = await ltClient.fetchBucketAcc();
         setBucketSize(bucket.volume);
-    }
+    };
 
     const onTrigger = async () => {
         if (wallet) {
@@ -74,7 +74,7 @@ const Content: FC = () => {
             const [pda, _] = await ltClient.findBucketPDA();
             ltClient.fillBucket(pda, wallet?.publicKey);
         }
-    }
+    };
 
     useEffect(() => {
         (async () => {
@@ -85,9 +85,15 @@ const Content: FC = () => {
     }, [wallet]);
 
     return (
-        <div className='flex flex-col'>
+        <div className="flex flex-col">
+            {[...Array(10).keys()].map((value, index) => (
+                <div key={index} className={`p-2 ${bucketSize >= (10 - index)? "bg-blue-400": "bg-white"} mt-1`}></div>
+            ))}
             <h1> Bucket Size: {bucketSize} </h1>
-            <a className='bg-blue-900 text-center cursor-pointer rounded p-4' onClick={onTrigger}> Fill Bucket </a>
+            <a className="bg-blue-900 text-center cursor-pointer rounded p-4" onClick={onTrigger}>
+                {' '}
+                Fill Bucket{' '}
+            </a>
             <br></br>
             <WalletMultiButton />
         </div>
