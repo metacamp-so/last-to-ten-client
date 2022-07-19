@@ -1,6 +1,6 @@
 import { createDefaultAuthorizationResultCache, SolanaMobileWalletAdapter } from '@solana-mobile/wallet-adapter-mobile';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
-import { ConnectionProvider, useAnchorWallet, WalletProvider } from '@solana/wallet-adapter-react';
+import { AnchorWallet, ConnectionProvider, useAnchorWallet, WalletProvider } from '@solana/wallet-adapter-react';
 import { WalletModalProvider, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import {
     GlowWalletAdapter,
@@ -62,10 +62,16 @@ const Content: FC = () => {
     const conn = new Connection('https://api.devnet.solana.com');
     const program = new PublicKey('6DXeNKvUyeqeqdbCwP9VTTedJd3e2MCiuf1KWZBdhoJY');
 
-    const refreshSize = async () => {
-        const ltClient = new LastTenClient(conn, wallet as any, ltIdl as any, program);
-        const bucket = await ltClient.fetchBucketAcc();
-        setBucketSize(bucket.volume);
+    const refreshSize = async (ltClient: any) => {
+        try {
+            const bucket = await ltClient.fetchBucketAcc();
+            setBucketSize(bucket.volume);
+        } catch (err) {
+            console.log (err)
+        } finally {
+            // await new Promise(refreshSize => setTimeout(refreshSize, 5000));
+            setTimeout(() => refreshSize(ltClient), 1000);
+        }
     };
 
     const onTrigger = async () => {
@@ -79,7 +85,8 @@ const Content: FC = () => {
     useEffect(() => {
         (async () => {
             if (wallet) {
-                await refreshSize();
+                const ltClient = new LastTenClient(conn, wallet as any, ltIdl as any, program);
+                refreshSize(ltClient);
             }
         })();
     }, [wallet]);
